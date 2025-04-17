@@ -4,6 +4,10 @@ import createMemoryStore from "memorystore";
 
 const MemoryStore = createMemoryStore(session);
 
+// Generic session store type to support both memory and database stores
+// TypeScript will allow any Store implementation that satisfies the SessionStore interface
+type SessionStore = session.Store;
+
 export interface IStorage {
   // User methods
   getUser(id: number): Promise<User | undefined>;
@@ -48,7 +52,10 @@ export interface IStorage {
   isFavorite(userId: number, salonId: number): Promise<boolean>;
   
   // Session store
-  sessionStore: ReturnType<typeof createMemoryStore>;
+  sessionStore: SessionStore;
+  
+  // Database seeding
+  seedDatabase?(): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -63,7 +70,7 @@ export class MemStorage implements IStorage {
   private serviceIdCounter: number;
   private reviewIdCounter: number;
   private bookingIdCounter: number;
-  sessionStore: ReturnType<typeof createMemoryStore>;
+  sessionStore: SessionStore;
 
   constructor() {
     this.users = new Map();
@@ -442,4 +449,7 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+import { DatabaseStorage } from './database-storage';
+
+// Use DatabaseStorage instead of MemStorage for persistence
+export const storage = new DatabaseStorage();
