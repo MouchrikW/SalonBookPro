@@ -8,6 +8,11 @@ import { z } from "zod";
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up authentication routes
   setupAuth(app);
+  
+  // Seed the database if needed
+  if (storage.seedDatabase) {
+    await storage.seedDatabase();
+  }
 
   // Salon routes
   app.get("/api/salons", async (req, res) => {
