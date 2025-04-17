@@ -9,24 +9,9 @@ export function ProtectedRoute({
   path: string;
   component: () => React.JSX.Element;
 }) {
-  // Default values if auth fails
-  let user = null;
-  let isLoading = false;
+  const { user, isLoading } = useAuth();
   
-  try {
-    const auth = useAuth();
-    user = auth.user;
-    isLoading = auth.isLoading;
-  } catch (error) {
-    console.error("Auth provider not available:", error);
-    // If auth provider is not available, redirect to auth page
-    return (
-      <Route path={path}>
-        <Redirect to="/auth" />
-      </Route>
-    );
-  }
-
+  // While authenticating, show a loading spinner
   if (isLoading) {
     return (
       <Route path={path}>
@@ -37,6 +22,7 @@ export function ProtectedRoute({
     );
   }
 
+  // If not authenticated, redirect to auth page
   if (!user) {
     return (
       <Route path={path}>
@@ -45,5 +31,6 @@ export function ProtectedRoute({
     );
   }
 
+  // If authenticated, render the component
   return <Route path={path} component={Component} />;
 }

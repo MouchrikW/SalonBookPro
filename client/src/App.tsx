@@ -11,15 +11,21 @@ import { ProtectedRoute } from "./lib/protected-route";
 import Header from "./components/layout/header";
 import Footer from "./components/layout/footer";
 
+// Separate public routes from authenticated routes for clarity
 function Router() {
   return (
     <Switch>
+      {/* Public Routes */}
       <Route path="/" component={HomePage} />
       <Route path="/salons/:id" component={SalonProfilePage} />
       <Route path="/auth" component={AuthPage} />
+      
+      {/* Protected Routes */}
       <ProtectedRoute path="/booking/:salonId/:serviceId" component={BookingPage} />
       <ProtectedRoute path="/dashboard" component={UserDashboard} />
       <ProtectedRoute path="/salon-dashboard" component={SalonDashboard} />
+      
+      {/* 404 Route */}
       <Route component={NotFound} />
     </Switch>
   );

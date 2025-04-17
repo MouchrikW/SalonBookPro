@@ -28,17 +28,8 @@ export default function Header() {
   const isMobile = useIsMobile();
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   
-  // Use try-catch to handle potential auth context issues
-  let user = null;
-  let logoutMutation = { mutate: () => {} };
-  
-  try {
-    const auth = useAuth();
-    user = auth.user;
-    logoutMutation = auth.logoutMutation;
-  } catch (error) {
-    console.error("Auth provider not available:", error);
-  }
+  // Get auth context with default values provided by the context
+  const { user, logoutMutation } = useAuth();
 
   const handleLogout = () => {
     logoutMutation.mutate();

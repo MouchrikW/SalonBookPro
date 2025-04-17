@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useContext, useState, useEffect } from "react";
 import {
   useQuery,
   useMutation,
@@ -7,6 +7,31 @@ import {
 import { insertUserSchema, User as SelectUser, InsertUser } from "@shared/schema";
 import { getQueryFn, apiRequest, queryClient } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+
+// Create a default context value instead of null to avoid using conditionals
+const defaultMutationResult = {
+  isPending: false,
+  isSuccess: false,
+  isError: false,
+  error: null,
+  data: undefined,
+  mutate: () => {},
+  mutateAsync: async () => ({}),
+  reset: () => {},
+  variables: undefined,
+  failureCount: 0,
+  failureReason: null,
+  status: 'idle',
+} as any;
+
+const defaultAuthContextValue = {
+  user: null,
+  isLoading: false,
+  error: null,
+  loginMutation: defaultMutationResult,
+  logoutMutation: defaultMutationResult,
+  registerMutation: defaultMutationResult,
+};
 
 type AuthContextType = {
   user: SelectUser | null;
@@ -19,9 +44,14 @@ type AuthContextType = {
 
 type LoginData = Pick<InsertUser, "username" | "password">;
 
-export const AuthContext = createContext<AuthContextType | null>(null);
+// Create context with default values
+export const AuthContext = createContext<AuthContextType>(defaultAuthContextValue);
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
+  const [initialized, setInitialized] = useState(false);
+  
+  // This query fetches the current user if they're logged in
   const {
     data: user,
     error,
@@ -30,6 +60,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryKey: ["/api/user"],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
+
+  // Set initialized after the initial user check
+  useEffect(() => {
+    if (!isLoading) {
+      setInitialized(true);
+    }
+  }, [isLoading]);
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginData) => {
@@ -97,7 +134,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider
       value={{
         user: user ?? null,
-        isLoading,
+        isLoading: isLoading && !initialized,
         error,
         loginMutation,
         logoutMutation,
@@ -110,9 +147,5 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
+  return useContext(AuthContext);
 }

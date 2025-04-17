@@ -18,14 +18,8 @@ export default function SalonCard({ salon }: SalonCardProps) {
   const queryClient = useQueryClient();
   const [isHovering, setIsHovering] = useState(false);
   
-  // Safely use auth
-  let user = null;
-  try {
-    const auth = useAuth();
-    user = auth.user;
-  } catch (error) {
-    console.error("Auth provider not available:", error);
-  }
+  // Get auth context with default values provided by the context
+  const { user } = useAuth();
 
   // Check if salon is in favorites
   const { data: favoriteData } = useQuery({
