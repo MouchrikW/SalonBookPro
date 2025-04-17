@@ -9,7 +9,23 @@ export function ProtectedRoute({
   path: string;
   component: () => React.JSX.Element;
 }) {
-  const { user, isLoading } = useAuth();
+  // Default values if auth fails
+  let user = null;
+  let isLoading = false;
+  
+  try {
+    const auth = useAuth();
+    user = auth.user;
+    isLoading = auth.isLoading;
+  } catch (error) {
+    console.error("Auth provider not available:", error);
+    // If auth provider is not available, redirect to auth page
+    return (
+      <Route path={path}>
+        <Redirect to="/auth" />
+      </Route>
+    );
+  }
 
   if (isLoading) {
     return (

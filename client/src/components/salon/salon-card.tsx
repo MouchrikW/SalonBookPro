@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Salon } from "@shared/schema";
 import { useAuth } from "@/hooks/use-auth";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, getQueryFn } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
 interface SalonCardProps {
@@ -14,10 +14,18 @@ interface SalonCardProps {
 }
 
 export default function SalonCard({ salon }: SalonCardProps) {
-  const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isHovering, setIsHovering] = useState(false);
+  
+  // Safely use auth
+  let user = null;
+  try {
+    const auth = useAuth();
+    user = auth.user;
+  } catch (error) {
+    console.error("Auth provider not available:", error);
+  }
 
   // Check if salon is in favorites
   const { data: favoriteData } = useQuery({

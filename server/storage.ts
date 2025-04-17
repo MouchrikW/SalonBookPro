@@ -86,7 +86,112 @@ export class MemStorage implements IStorage {
   }
 
   private seedData() {
-    // Seed data will be added by the client when needed
+    // Add test users
+    this.createUser({
+      name: "Test User",
+      username: "testuser",
+      password: "password123",
+      email: "test@example.com",
+      phone: "1234567890",
+      isSalonOwner: false
+    });
+    
+    this.createUser({
+      name: "Salon Owner",
+      username: "salonowner",
+      password: "password123",
+      email: "owner@example.com",
+      phone: "0987654321",
+      isSalonOwner: true
+    });
+    
+    // Add test salons
+    const salon1 = this.createSalon({
+      name: "Luxury Spa & Salon",
+      address: "123 Main Street",
+      email: "contact@luxuryspa.com",
+      phone: "555-123-4567",
+      description: "A luxury spa and salon offering premium services",
+      location: "Marrakech",
+      ownerId: 2,
+      images: [
+        "https://images.unsplash.com/photo-1600334129128-685c5582fd35?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&h=350&q=80",
+        "https://images.unsplash.com/photo-1595855426019-73351908fdbe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&h=350&q=80"
+      ],
+      categories: ["Spa", "Hair", "Nails", "Facial"],
+      priceRange: { min: 200, max: 1000 },
+      featured: true,
+      rating: 4.8,
+      reviewCount: 124
+    });
+    
+    const salon2 = this.createSalon({
+      name: "Modern Beauty Center",
+      address: "456 Avenue Mohammed V",
+      email: "info@modernbeauty.com",
+      phone: "555-987-6543",
+      description: "Contemporary beauty center with the latest trends and techniques",
+      location: "Casablanca",
+      ownerId: 2,
+      images: [
+        "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&h=350&q=80",
+        "https://images.unsplash.com/photo-1470259078422-826894b933aa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&h=350&q=80"
+      ],
+      categories: ["Hair", "Makeup", "Nails"],
+      priceRange: { min: 150, max: 800 },
+      featured: false,
+      rating: 4.2,
+      reviewCount: 87
+    });
+    
+    // Add services to salons
+    this.createService({
+      salonId: 1,
+      name: "Luxury Hammam Ritual",
+      description: "Traditional Moroccan hammam experience with full body exfoliation and mask",
+      price: 600,
+      duration: 90,
+      category: "Spa",
+      image: "https://images.unsplash.com/photo-1583416750470-965b2707b355?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&h=350&q=80",
+      isPopular: true,
+      discountedPrice: 500
+    });
+    
+    this.createService({
+      salonId: 1,
+      name: "Signature Facial",
+      description: "Deep cleansing facial with premium products and massage",
+      price: 450,
+      duration: 60,
+      category: "Facial",
+      image: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&h=350&q=80",
+      isPopular: true,
+      discountedPrice: null
+    });
+    
+    this.createService({
+      salonId: 2,
+      name: "Hair Cut & Style",
+      description: "Professional haircut and styling by expert stylists",
+      price: 350,
+      duration: 45,
+      category: "Hair",
+      image: "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&h=350&q=80",
+      isPopular: true,
+      discountedPrice: null
+    });
+    
+    this.createService({
+      salonId: 2,
+      name: "Gel Manicure",
+      description: "Long-lasting gel manicure with nail art options",
+      price: 200,
+      duration: 60,
+      category: "Nails",
+      image: "https://images.unsplash.com/photo-1604902396830-aca21156dede?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&h=350&q=80",
+      isPopular: false,
+      discountedPrice: 180
+    });
   }
 
   // User methods
