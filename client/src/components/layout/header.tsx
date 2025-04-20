@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
+import { useStore } from "@/hooks/use-store";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,8 +21,11 @@ import {
   Settings,
   Calendar,
   Store,
+  ShoppingCart,
+  Package,
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Badge } from "@/components/ui/badge";
 
 export default function Header() {
   const [location] = useLocation();
@@ -30,6 +34,9 @@ export default function Header() {
   
   // Get auth context with default values provided by the context
   const { user, logoutMutation } = useAuth();
+  
+  // Get store context
+  const { totalItems } = useStore();
 
   const handleLogout = () => {
     logoutMutation.mutate();
@@ -70,6 +77,22 @@ export default function Header() {
 
         {/* Navigation */}
         <nav className="flex items-center">
+          {/* Store Links */}
+          <div className="flex items-center mr-4">
+            <Link href="/store" className="flex items-center text-foreground hover:text-primary transition-colors mr-4">
+              <Package className="h-5 w-5 mr-1" />
+              {!isMobile && <span>Store</span>}
+            </Link>
+            <Link href="/store/cart" className="relative flex items-center text-foreground hover:text-primary transition-colors">
+              <ShoppingCart className="h-5 w-5" />
+              {totalItems > 0 && (
+                <Badge variant="destructive" className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs">
+                  {totalItems}
+                </Badge>
+              )}
+            </Link>
+          </div>
+
           {/* User is logged out */}
           {!user && (
             <div className="flex items-center space-x-4">
@@ -129,12 +152,20 @@ export default function Header() {
                     </Link>
                   </DropdownMenuItem>
                   {user.isSalonOwner && (
-                    <DropdownMenuItem asChild>
-                      <Link href="/salon-dashboard" className="flex items-center cursor-pointer">
-                        <Store className="mr-2 h-4 w-4" />
-                        <span>Salon Dashboard</span>
-                      </Link>
-                    </DropdownMenuItem>
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link href="/salon-dashboard" className="flex items-center cursor-pointer">
+                          <Store className="mr-2 h-4 w-4" />
+                          <span>Salon Dashboard</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/salon-dashboard?tab=store" className="flex items-center cursor-pointer">
+                          <Package className="mr-2 h-4 w-4" />
+                          <span>Store Manager</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
                   )}
                   <DropdownMenuItem asChild>
                     <Link href="/dashboard?tab=settings" className="flex items-center cursor-pointer">
